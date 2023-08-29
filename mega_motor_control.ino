@@ -17,9 +17,9 @@ int INP_CONTROL_MODE=513;
 int acceleration=75;  // Range of acceleration is 1-128
 int speed=2000;      // Range of acceleration is 0-2048
 
-void actuate(const std_msgs::Int16& command){
+void actuate(const std_msgs::Int16& command){//Callback function called everytime a message is published to /arduino_receiver
 if(command.data==0){//We have received command to stop. Get previous state and stop accordingly
-  ack.data="ACK: STOP";
+  ack.data="ACK: STOP";//Acknowledge that we have the request to stop
   if(state==1){//Were we going forward? Then Brake_Motor with 0
   rmcs.Brake_Motor(slave_id, 0);
   delay(1000);
@@ -27,7 +27,7 @@ if(command.data==0){//We have received command to stop. Get previous state and s
 else if(state==3){//Were we going backward? Then Brake_Motor with 1
     rmcs.Brake_Motor(slave_id, 1);
     delay(1000);
-
+  ackno.publish(&ack); //Send our acknowledgement once we have fulfilled the request
 }
 state=0;
 return;
@@ -45,7 +45,7 @@ else if(state==3){
 
   if(state==1){
     //Move forward
-    ack.data="ACK: W";
+    ack.data="ACK: W";   //Acknowledge that we have the request to move forward
       ackno.publish(&ack);
 
     rmcs.Speed(slave_id,speed);                   //Set speed within range of 0-2048.
@@ -54,11 +54,11 @@ else if(state==3){
   }
   else if(state==2){
     //Turn left
-    ack.data="ACK: A";
+    ack.data="ACK: A"; //Acknowledge that we have the request to turn left
   }
   else if(state==3){
     //Move backward
-    ack.data="ACK: S";
+    ack.data="ACK: S";//Acknowledge that we have the request to move back
       ackno.publish(&ack);
 
      rmcs.Speed(slave_id,speed);                   //Set speed within range of 0-2048.
@@ -67,14 +67,13 @@ else if(state==3){
   }
   else if(state==4){
     //Turn right
-    ack.data="ACK: D";
+    ack.data="ACK: D"; //Acknowledge that we have received the request to turn right
   }
   else{
     //Illegal command
-    ack.data="NO ACKNO";
+    ack.data="NO ACKNO"; //We have been sent an invalid command. Cannot fullfill request.
   }
 
- 
 }
 
 
