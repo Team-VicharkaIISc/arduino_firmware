@@ -29,10 +29,14 @@ else if(state==3){//Were we going backward? Then Brake_Motor with 1
     delay(1000);
   ackno.publish(&ack); //Send our acknowledgement once we have fulfilled the request
 }
-state=0;
+state=0;//we have stopped. Update state
 return;
 }
+
+  
 state=command.data; //set state to received command
+
+  
 if(state==1){
   rmcs.Brake_Motor(slave_id, 0);
   delay(1000);
